@@ -4,7 +4,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package koneksi;
+package rasel;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author Ttngrh
+ * @author rasel
  */
 public class ManageData extends javax.swing.JDialog {
      /**
