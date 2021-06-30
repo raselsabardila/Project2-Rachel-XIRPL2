@@ -1,4 +1,3 @@
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -17,6 +16,10 @@ import javax.swing.JOptionPane;
  * @author rasel
  */
 public class ManageData extends javax.swing.JDialog {
+
+    ManageData(DataSiswa aThis, boolean b, String tambah, String string) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
      /**
      * Creates new form ManageData
      */
@@ -26,6 +29,12 @@ public class ManageData extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "root", "", "db_sekolah");
+
+        action = act;
+        if(action.equals("Edit")){
+            txtNIS.setEnabled(false);
+            showData(nis);
+        }
     }
 
     public void SimpanData(){
@@ -47,6 +56,45 @@ public class ManageData extends javax.swing.JDialog {
         }catch(SQLException ex){
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Terjadi Kesalahan pada Database");
+        }
+    }
+
+    void showData(String nis){
+        try{
+            Statement stmt = koneksi.createStatement();
+            String query = "SELECT * FROM t_siswa WHERE nis = '"+nis+"'";
+            ResultSet rs = stmt.executeQuery(query);
+            rs.first();
+            txtNIS.setText(rs.getString("nis"));
+            txtNama.setText(rs.getString("nama"));
+            cmbKelas.setSelectedItem(rs.getString("kelas"));
+            cmbJurusan.setSelectedItem(rs.getString("jurusan"));
+        }catch(SQLException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Terjadi Kesalahan di Query");
+        }
+    }
+    
+    public void EditData(){
+        String nis      = txtNIS.getText();
+        String nama     = txtNama.getText();
+        String kelas    = cmbKelas.getSelectedItem().toString();
+        String jurusan  = cmbJurusan.getSelectedItem().toString();
+        
+        try {
+            Statement stmt = koneksi.createStatement();
+            String query = "UPDATE t_siswa SET nama = '"+nama+"'," + "kelas ='"+kelas+"'," + "jurusan='"+jurusan+"' WHERE nis ='" +nis+ "'";
+            
+            System.out.println(query);
+            int berhasil = stmt.executeUpdate(query);
+            if(berhasil == 1){
+                JOptionPane.showMessageDialog(null, "Data berhasil Dirubah");
+            }else{
+                JOptionPane.showMessageDialog(null, "Data gagal Diubah");
+            }
+        }catch(SQLException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan pada query");
         }
     }
     
@@ -168,7 +216,8 @@ public class ManageData extends javax.swing.JDialog {
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
         // TODO add your handling code here:
-        SimpanData();
+        if(action.equals("Edit")) EditData();
+        else SimpanData();
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     /**
